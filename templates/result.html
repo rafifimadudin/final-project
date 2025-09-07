@@ -1,0 +1,347 @@
+{% extends "base.html" %} 
+{% block title %}Hasil Analisis Sentimen{% endblock %}
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-12">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">
+        <span class="bg-gradient-to-r from-blue-400 via-purple-500 to-blue-600 bg-clip-text text-transparent">
+          <i class="fas fa-chart-pie mr-3"></i>
+          Hasil Analisis Sentimen
+        </span>
+      </h1>
+      <p class="text-xl text-gray-300">
+        Berikut adalah hasil analisis sentimen dari teks yang Anda masukkan
+      </p>
+    </div>
+
+    <!-- Main Result Cards -->
+    <div class="grid md:grid-cols-3 gap-6 mb-12">
+      <!-- Sentiment Score -->
+      <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700 shadow-2xl p-6 text-center">
+        <div class="relative w-32 h-32 mx-auto mb-4">
+          <!-- Circular Progress -->
+          <svg class="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100">
+            <circle
+              cx="50"
+              cy="50"
+              r="40"
+              stroke="currentColor"
+              stroke-width="8"
+              fill="transparent"
+              class="text-gray-700"
+            />
+            <circle
+              cx="50"
+              cy="50"
+              r="40"
+              stroke="currentColor"
+              stroke-width="8"
+              fill="transparent"
+              stroke-dasharray="251.2"
+              stroke-dashoffset="{{ 251.2 - (result.sentiment_score * 251.2) }}"
+              stroke-linecap="round"
+              class="{% if result.sentiment_score > 0.6 %}text-green-400{% elif result.sentiment_score < 0.4 %}text-red-400{% else %}text-yellow-400{% endif %} transition-all duration-1000"
+            />
+          </svg>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="text-2xl font-bold text-white">
+              {{ "%.1f"|format(result.sentiment_score * 100) }}%
+            </span>
+          </div>
+        </div>
+        <h3 class="text-xl font-semibold text-white mb-2">Skor Sentimen</h3>
+        <p class="text-gray-400">Score: {{ result.sentiment_score }}</p>
+      </div>
+
+      <!-- Sentiment Label -->
+      <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700 shadow-2xl p-6 text-center flex flex-col justify-center">
+        <div class="mb-4">
+          {% if result.sentiment_label == 'Positive' %}
+          <div class="w-20 h-20 bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-smile text-4xl text-green-400"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-green-400 mb-2">{{ result.sentiment_label }}</h3>
+          {% elif result.sentiment_label == 'Negative' %}
+          <div class="w-20 h-20 bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-frown text-4xl text-red-400"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-red-400 mb-2">{{ result.sentiment_label }}</h3>
+          {% else %}
+          <div class="w-20 h-20 bg-yellow-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-meh text-4xl text-yellow-400"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-yellow-400 mb-2">{{ result.sentiment_label }}</h3>
+          {% endif %}
+        </div>
+        <p class="text-gray-400">Kategori Sentimen</p>
+      </div>
+
+      <!-- Confidence Level -->
+      <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700 shadow-2xl p-6 text-center flex flex-col justify-center">
+        <div class="mb-4">
+          <div class="w-full bg-gray-700 rounded-full h-4 mb-4">
+            <div 
+              class="bg-gradient-to-r from-blue-500 to-purple-500 h-4 rounded-full transition-all duration-1000 ease-out"
+              style="width: {{ result.confidence * 100 }}%"
+            ></div>
+          </div>
+          <h3 class="text-2xl font-bold text-white mb-2">
+            {{ "%.1f"|format(result.confidence * 100) }}%
+          </h3>
+        </div>
+        <p class="text-gray-400">Tingkat Keyakinan</p>
+      </div>
+    </div>
+
+    <!-- Detailed Information -->
+    <div class="grid lg:grid-cols-2 gap-8 mb-12">
+      <!-- Input Text Analysis -->
+      <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700 shadow-xl">
+        <div class="p-6 border-b border-gray-700">
+          <h3 class="text-xl font-semibold text-white flex items-center">
+            <i class="fas fa-file-text mr-3 text-blue-400"></i>
+            Teks yang Dianalisis
+          </h3>
+        </div>
+        <div class="p-6 space-y-6">
+          <div>
+            <h4 class="text-lg font-medium text-gray-300 mb-3">Teks Asli:</h4>
+            <div class="bg-gray-700/50 p-4 rounded-lg border border-gray-600">
+              <p class="text-white leading-relaxed">{{ input_data.text_content }}</p>
+            </div>
+          </div>
+
+          <div>
+            <h4 class="text-lg font-medium text-gray-300 mb-3">Teks Setelah Preprocessing:</h4>
+            <div class="bg-gray-700/50 p-4 rounded-lg border border-gray-600">
+              <p class="text-gray-300 text-sm leading-relaxed">{{ result.processed_text }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metadata Information -->
+      <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700 shadow-xl">
+        <div class="p-6 border-b border-gray-700">
+          <h3 class="text-xl font-semibold text-white flex items-center">
+            <i class="fas fa-info-circle mr-3 text-blue-400"></i>
+            Informasi Metadata
+          </h3>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-300 flex items-center">
+              <i class="fas fa-share-alt mr-2 text-blue-400"></i>Platform:
+            </span>
+            <span class="px-3 py-1 bg-blue-900/30 text-blue-400 rounded-full text-sm border border-blue-700">
+              {{ input_data.platform }}
+            </span>
+          </div>
+
+          <div class="flex justify-between items-center">
+            <span class="text-gray-300 flex items-center">
+              <i class="fas fa-map-marker-alt mr-2 text-green-400"></i>Lokasi:
+            </span>
+            <span class="px-3 py-1 bg-green-900/30 text-green-400 rounded-full text-sm border border-green-700">
+              {{ input_data.location }}
+            </span>
+          </div>
+
+          <div class="flex justify-between items-center">
+            <span class="text-gray-300 flex items-center">
+              <i class="fas fa-language mr-2 text-purple-400"></i>Bahasa:
+            </span>
+            <span class="px-3 py-1 bg-purple-900/30 text-purple-400 rounded-full text-sm border border-purple-700">
+              {{ input_data.language }}
+            </span>
+          </div>
+
+          <div class="flex justify-between items-center">
+            <span class="text-gray-300 flex items-center">
+              <i class="fas fa-calendar mr-2 text-yellow-400"></i>Hari:
+            </span>
+            <span class="px-3 py-1 bg-yellow-900/30 text-yellow-400 rounded-full text-sm border border-yellow-700">
+              {{ input_data.day_of_week }}
+            </span>
+          </div>
+
+          {% if input_data.mentions %}
+          <div class="flex justify-between items-center">
+            <span class="text-gray-300 flex items-center">
+              <i class="fas fa-at mr-2 text-gray-400"></i>Mentions:
+            </span>
+            <span class="px-3 py-1 bg-gray-900/30 text-gray-400 rounded-full text-sm border border-gray-700">
+              {{ input_data.mentions }}
+            </span>
+          </div>
+          {% endif %}
+          
+          {% if input_data.hashtags %}
+          <div class="flex justify-between items-center">
+            <span class="text-gray-300 flex items-center">
+              <i class="fas fa-hashtag mr-2 text-pink-400"></i>Hashtags:
+            </span>
+            <span class="px-3 py-1 bg-pink-900/30 text-pink-400 rounded-full text-sm border border-pink-700">
+              {{ input_data.hashtags }}
+            </span>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Sentiment Interpretation -->
+    <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700 shadow-xl mb-12">
+      <div class="p-6 border-b border-gray-700">
+        <h3 class="text-xl font-semibold text-white flex items-center">
+          <i class="fas fa-lightbulb mr-3 text-yellow-400"></i>
+          Interpretasi Hasil
+        </h3>
+      </div>
+      <div class="p-6">
+        <div class="grid lg:grid-cols-4 gap-6">
+          <div class="lg:col-span-3">
+            {% if result.sentiment_label == 'Positive' %}
+            <div class="bg-green-900/20 border border-green-700 rounded-xl p-6">
+              <h4 class="text-lg font-semibold text-green-400 mb-3 flex items-center">
+                <i class="fas fa-thumbs-up mr-2"></i>Sentimen Positif Terdeteksi
+              </h4>
+              <p class="text-gray-300 leading-relaxed">
+                Teks menunjukkan sentimen yang positif dengan skor {{ result.sentiment_score }}. 
+                Ini menandakan bahwa konten memiliki nada yang optimis, senang, atau menyetujui topik yang dibahas. 
+                Tingkat keyakinan model adalah {{ "%.1f"|format(result.confidence * 100) }}%.
+              </p>
+            </div>
+            {% elif result.sentiment_label == 'Negative' %}
+            <div class="bg-red-900/20 border border-red-700 rounded-xl p-6">
+              <h4 class="text-lg font-semibold text-red-400 mb-3 flex items-center">
+                <i class="fas fa-thumbs-down mr-2"></i>Sentimen Negatif Terdeteksi
+              </h4>
+              <p class="text-gray-300 leading-relaxed">
+                Teks menunjukkan sentimen yang negatif dengan skor {{ result.sentiment_score }}. 
+                Ini menandakan bahwa konten memiliki nada yang pesimis, tidak senang, atau menolak topik yang dibahas. 
+                Tingkat keyakinan model adalah {{ "%.1f"|format(result.confidence * 100) }}%.
+              </p>
+            </div>
+            {% else %}
+            <div class="bg-yellow-900/20 border border-yellow-700 rounded-xl p-6">
+              <h4 class="text-lg font-semibold text-yellow-400 mb-3 flex items-center">
+                <i class="fas fa-minus mr-2"></i>Sentimen Netral Terdeteksi
+              </h4>
+              <p class="text-gray-300 leading-relaxed">
+                Teks menunjukkan sentimen yang netral dengan skor {{ result.sentiment_score }}. 
+                Ini menandakan bahwa konten memiliki nada yang objektif atau tidak menunjukkan emosi yang kuat. 
+                Tingkat keyakinan model adalah {{ "%.1f"|format(result.confidence * 100) }}%.
+              </p>
+            </div>
+            {% endif %}
+          </div>
+          
+          <div class="text-center">
+            <h4 class="text-lg font-medium text-gray-300 mb-4">Emosi Dominan</h4>
+            <div class="w-20 h-20 bg-gray-700/50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="fas fa-heart text-2xl text-pink-400"></i>
+            </div>
+            <span class="inline-flex items-center px-4 py-2 bg-gray-700/50 text-gray-300 rounded-full text-sm border border-gray-600">
+              {{ result.emotion }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="text-center space-x-4">
+      <a href="{{ url_for('index') }}" 
+         class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105">
+        <i class="fas fa-redo mr-2"></i>Analisis Teks Lain
+      </a>
+      <button
+        onclick="window.print()"
+        class="inline-flex items-center px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg border border-gray-600 transition-colors"
+      >
+        <i class="fas fa-print mr-2"></i>Cetak Hasil
+      </button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Add copy to clipboard functionality
+  function copyResult() {
+    const resultText = `
+Hasil Analisis Sentimen:
+- Skor: {{ result.sentiment_score }}
+- Label: {{ result.sentiment_label }}
+- Keyakinan: {{ "%.1f"|format(result.confidence * 100) }}%
+- Teks: {{ input_data.text_content }}
+    `;
+
+    navigator.clipboard.writeText(resultText).then(() => {
+      // Show a modern toast notification instead of alert
+      showToast('Hasil telah disalin ke clipboard!');
+    });
+  }
+
+  // Show toast notification
+  function showToast(message) {
+    const toast = document.createElement('div');
+    toast.className = 'fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-x-full';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.classList.remove('translate-x-full');
+    }, 100);
+    
+    setTimeout(() => {
+      toast.classList.add('translate-x-full');
+      setTimeout(() => {
+        document.body.removeChild(toast);
+      }, 300);
+    }, 3000);
+  }
+
+  // Animate elements on page load
+  document.addEventListener("DOMContentLoaded", function () {
+    // Animate progress bars
+    const progressBars = document.querySelectorAll('[style*="width:"]');
+    progressBars.forEach(bar => {
+      const originalWidth = bar.style.width;
+      bar.style.width = '0%';
+      setTimeout(() => {
+        bar.style.transition = 'width 1s ease-in-out';
+        bar.style.width = originalWidth;
+      }, 500);
+    });
+
+    // Animate circular progress
+    const circularProgress = document.querySelector('circle[stroke-dashoffset]');
+    if (circularProgress) {
+      const originalOffset = circularProgress.getAttribute('stroke-dashoffset');
+      circularProgress.setAttribute('stroke-dashoffset', '251.2');
+      setTimeout(() => {
+        circularProgress.style.transition = 'stroke-dashoffset 1s ease-in-out';
+        circularProgress.setAttribute('stroke-dashoffset', originalOffset);
+      }, 500);
+    }
+
+    // Stagger animation for cards
+    const cards = document.querySelectorAll('.bg-gray-800\\/50');
+    cards.forEach((card, index) => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(20px)';
+      setTimeout(() => {
+        card.style.transition = 'all 0.6s ease-out';
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      }, index * 200);
+    });
+  });
+</script>
+{% endblock %}

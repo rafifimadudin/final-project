@@ -1,0 +1,773 @@
+{% extends "base.html" %} {% block title %}Analisis Sentimen - Home{% endblock
+%} {% block content %}
+<!-- Hero Section -->
+<div
+  class="min-h-screen flex items-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <!-- Left Column - Hero Content -->
+      <div class="space-y-8">
+        <div class="space-y-6">
+          <h1 class="text-5xl md:text-6xl font-bold">
+            <span
+              class="bg-gradient-to-r from-blue-400 via-purple-500 to-blue-600 bg-clip-text text-transparent"
+            >
+              Analisis Sentimen
+            </span>
+            <br />
+            <span class="text-white">Media Sosial</span>
+          </h1>
+
+          <p class="text-xl text-gray-300 leading-relaxed max-w-lg">
+            Analisis sentimen dari postingan media sosial menggunakan machine
+            learning. Model Ridge Regression dengan regularisasi L2
+            (alpha=100.0) yang telah dilatih pada 12,000+ postingan untuk hasil
+            yang akurat.
+          </p>
+
+          <div class="flex flex-wrap gap-3">
+            <span
+              class="px-4 py-2 bg-green-900/30 text-green-400 rounded-full text-sm font-medium border border-green-700"
+            >
+              <i class="fas fa-check mr-2"></i>R² = 0.8610
+            </span>
+            <span
+              class="px-4 py-2 bg-blue-900/30 text-blue-400 rounded-full text-sm font-medium border border-blue-700"
+            >
+              <i class="fas fa-lightning mr-2"></i>Real-time
+            </span>
+            <span
+              class="px-4 py-2 bg-purple-900/30 text-purple-400 rounded-full text-sm font-medium border border-purple-700"
+            >
+              <i class="fas fa-shield-alt mr-2"></i>Accurate
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Form -->
+      <div class="lg:pl-8">
+        <div
+          class="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700 shadow-2xl"
+        >
+          <div class="px-6 py-4 border-b border-gray-700">
+            <h3 class="text-xl font-semibold text-white flex items-center">
+              <i class="fas fa-comments mr-3 text-blue-400"></i>
+              Analisis Teks Anda
+            </h3>
+          </div>
+
+          <div class="p-6">
+            <form
+              method="POST"
+              action="{{ url_for('predict') }}"
+              id="sentimentForm"
+              class="space-y-6"
+            >
+              <!-- Main Text Input -->
+              <div class="space-y-2">
+                <label
+                  for="text_content"
+                  class="block text-sm font-medium text-gray-300"
+                >
+                  <i class="fas fa-edit mr-2 text-blue-400"></i>Teks untuk
+                  Dianalisis
+                </label>
+                <textarea
+                  class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-colors"
+                  id="text_content"
+                  name="text_content"
+                  rows="4"
+                  placeholder="Masukkan teks postingan media sosial di sini... Contoh: 'Saya sangat senang dengan produk ini! Kualitasnya luar biasa.'"
+                  required
+                  maxlength="1000"
+                ></textarea>
+                <div class="text-right text-sm text-gray-400">
+                  <span id="charCount">0</span>/1000 karakter
+                </div>
+              </div>
+
+              <!-- Platform and Language -->
+              <div class="grid md:grid-cols-2 gap-4">
+                <div class="space-y-2">
+                  <label
+                    for="platform"
+                    class="block text-sm font-medium text-gray-300"
+                  >
+                    <i class="fas fa-share-alt mr-2 text-blue-400"></i>Platform
+                  </label>
+                  <select
+                    class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    id="platform"
+                    name="platform"
+                  >
+                    <option value="Twitter">Twitter</option>
+                    <option value="Facebook">Facebook</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="LinkedIn">LinkedIn</option>
+                    <option value="TikTok">TikTok</option>
+                  </select>
+                </div>
+
+                <div class="space-y-2">
+                  <label
+                    for="language"
+                    class="block text-sm font-medium text-gray-300"
+                  >
+                    <i class="fas fa-language mr-2 text-blue-400"></i>Bahasa
+                  </label>
+                  <select
+                    class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    id="language"
+                    name="language"
+                  >
+                    <option value="English">English</option>
+                    <option value="Indonesian">Indonesian</option>
+                    <option value="Spanish">Spanish</option>
+                    <option value="French">French</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Location and Day -->
+              <div class="grid md:grid-cols-2 gap-4">
+                <div class="space-y-2">
+                  <label
+                    for="location"
+                    class="block text-sm font-medium text-gray-300"
+                  >
+                    <i class="fas fa-map-marker-alt mr-2 text-blue-400"></i
+                    >Lokasi
+                  </label>
+                  <select
+                    class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    id="location"
+                    name="location"
+                  >
+                    <option value="USA">USA</option>
+                    <option value="Indonesia">Indonesia</option>
+                    <option value="UK">UK</option>
+                    <option value="Canada">Canada</option>
+                    <option value="Australia">Australia</option>
+                    <option value="India">India</option>
+                  </select>
+                </div>
+
+                <div class="space-y-2">
+                  <label
+                    for="day_of_week"
+                    class="block text-sm font-medium text-gray-300"
+                  >
+                    <i class="fas fa-calendar mr-2 text-blue-400"></i>Hari
+                  </label>
+                  <select
+                    class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    id="day_of_week"
+                    name="day_of_week"
+                  >
+                    <option value="Monday">Senin</option>
+                    <option value="Tuesday">Selasa</option>
+                    <option value="Wednesday">Rabu</option>
+                    <option value="Thursday">Kamis</option>
+                    <option value="Friday">Jumat</option>
+                    <option value="Saturday">Sabtu</option>
+                    <option value="Sunday">Minggu</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Optional Fields Toggle -->
+              <div>
+                <button
+                  class="text-blue-400 hover:text-blue-300 text-sm font-medium flex items-center transition-colors"
+                  type="button"
+                  onclick="toggleOptionalFields()"
+                >
+                  <i class="fas fa-cog mr-2"></i>Opsi Tambahan - Untuk Prediksi
+                  Lebih Akurat (opsional)
+                  <i
+                    class="fas fa-chevron-down ml-2 transition-transform"
+                    id="toggleIcon"
+                  ></i>
+                </button>
+                <p class="text-xs text-gray-400 mt-1">
+                  💡 Model menggunakan 5000+ features untuk analisis
+                  komprehensif. Isi data tambahan untuk hasil terbaik.
+                </p>
+              </div>
+
+              <!-- Optional Fields -->
+              <div class="hidden space-y-4" id="optionalFields">
+                <!-- Social Media Data -->
+                <div class="grid md:grid-cols-2 gap-4">
+                  <div class="space-y-2">
+                    <label
+                      for="mentions"
+                      class="block text-sm font-medium text-gray-300"
+                    >
+                      <i class="fas fa-at mr-2 text-blue-400"></i>Mentions
+                    </label>
+                    <input
+                      type="text"
+                      class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      id="mentions"
+                      name="mentions"
+                      placeholder="@username @brand"
+                    />
+                  </div>
+
+                  <div class="space-y-2">
+                    <label
+                      for="hashtags"
+                      class="block text-sm font-medium text-gray-300"
+                    >
+                      <i class="fas fa-hashtag mr-2 text-blue-400"></i>Hashtags
+                    </label>
+                    <input
+                      type="text"
+                      class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      id="hashtags"
+                      name="hashtags"
+                      placeholder="#amazing #product #review"
+                    />
+                  </div>
+                </div>
+
+                <!-- Campaign Information -->
+                <div class="bg-gray-800/30 rounded-lg p-4 space-y-4">
+                  <h4
+                    class="text-sm font-medium text-gray-300 flex items-center"
+                  >
+                    <i class="fas fa-bullhorn mr-2 text-purple-400"></i>
+                    Informasi Campaign (Opsional)
+                  </h4>
+
+                  <div class="grid md:grid-cols-3 gap-4">
+                    <div class="space-y-2">
+                      <label
+                        for="brand_name"
+                        class="block text-xs font-medium text-gray-400"
+                      >
+                        Brand
+                      </label>
+                      <input
+                        type="text"
+                        class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        id="brand_name"
+                        name="brand_name"
+                        placeholder="Brand Name"
+                        value="Unknown"
+                      />
+                    </div>
+
+                    <div class="space-y-2">
+                      <label
+                        for="product_name"
+                        class="block text-xs font-medium text-gray-400"
+                      >
+                        Produk
+                      </label>
+                      <input
+                        type="text"
+                        class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        id="product_name"
+                        name="product_name"
+                        placeholder="Product Name"
+                        value="Unknown"
+                      />
+                    </div>
+
+                    <div class="space-y-2">
+                      <label
+                        for="campaign_name"
+                        class="block text-xs font-medium text-gray-400"
+                      >
+                        Campaign
+                      </label>
+                      <input
+                        type="text"
+                        class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        id="campaign_name"
+                        name="campaign_name"
+                        placeholder="Campaign Name"
+                        value="Unknown"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label
+                      for="campaign_phase"
+                      class="block text-xs font-medium text-gray-400"
+                    >
+                      Fase Campaign
+                    </label>
+                    <select
+                      class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                      id="campaign_phase"
+                      name="campaign_phase"
+                    >
+                      <option value="Pre-Launch">Pre-Launch</option>
+                      <option value="Launch" selected>Launch</option>
+                      <option value="Post-Launch">Post-Launch</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Engagement Metrics -->
+                <div class="bg-gray-800/30 rounded-lg p-4 space-y-4">
+                  <h4
+                    class="text-sm font-medium text-gray-300 flex items-center"
+                  >
+                    <i class="fas fa-chart-line mr-2 text-green-400"></i>
+                    Metrik Engagement (Estimasi)
+                  </h4>
+
+                  <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="space-y-2">
+                      <label
+                        for="likes_count"
+                        class="block text-xs font-medium text-gray-400"
+                      >
+                        Likes
+                      </label>
+                      <input
+                        type="number"
+                        class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        id="likes_count"
+                        name="likes_count"
+                        placeholder="0"
+                        value="50"
+                        min="0"
+                      />
+                    </div>
+
+                    <div class="space-y-2">
+                      <label
+                        for="shares_count"
+                        class="block text-xs font-medium text-gray-400"
+                      >
+                        Shares
+                      </label>
+                      <input
+                        type="number"
+                        class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        id="shares_count"
+                        name="shares_count"
+                        placeholder="0"
+                        value="5"
+                        min="0"
+                      />
+                    </div>
+
+                    <div class="space-y-2">
+                      <label
+                        for="comments_count"
+                        class="block text-xs font-medium text-gray-400"
+                      >
+                        Comments
+                      </label>
+                      <input
+                        type="number"
+                        class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        id="comments_count"
+                        name="comments_count"
+                        placeholder="0"
+                        value="10"
+                        min="0"
+                      />
+                    </div>
+
+                    <div class="space-y-2">
+                      <label
+                        for="impressions"
+                        class="block text-xs font-medium text-gray-400"
+                      >
+                        Impressions
+                      </label>
+                      <input
+                        type="number"
+                        class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        id="impressions"
+                        name="impressions"
+                        placeholder="1000"
+                        value="1000"
+                        min="1"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="grid md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                      <label
+                        for="engagement_rate"
+                        class="block text-xs font-medium text-gray-400"
+                      >
+                        Engagement Rate (0.0-1.0)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        id="engagement_rate"
+                        name="engagement_rate"
+                        placeholder="0.1"
+                        value="0.1"
+                        min="0"
+                        max="1"
+                      />
+                    </div>
+
+                    <div class="space-y-2">
+                      <label
+                        for="toxicity_score"
+                        class="block text-xs font-medium text-gray-400"
+                      >
+                        Toxicity Score (0.0-1.0)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        id="toxicity_score"
+                        name="toxicity_score"
+                        placeholder="0.1"
+                        value="0.1"
+                        min="0"
+                        max="1"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- User History Metrics -->
+                <div class="bg-gray-800/30 rounded-lg p-4 space-y-4">
+                  <h4
+                    class="text-sm font-medium text-gray-300 flex items-center"
+                  >
+                    <i class="fas fa-user-chart mr-2 text-orange-400"></i>
+                    Metrik User History (Estimasi)
+                  </h4>
+
+                  <div class="grid md:grid-cols-3 gap-4">
+                    <div class="space-y-2">
+                      <label
+                        for="user_past_sentiment_avg"
+                        class="block text-xs font-medium text-gray-400"
+                      >
+                        Avg Past Sentiment (0.0-1.0)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        id="user_past_sentiment_avg"
+                        name="user_past_sentiment_avg"
+                        placeholder="0.5"
+                        value="0.5"
+                        min="0"
+                        max="1"
+                      />
+                    </div>
+
+                    <div class="space-y-2">
+                      <label
+                        for="user_engagement_growth"
+                        class="block text-xs font-medium text-gray-400"
+                      >
+                        Engagement Growth (0.0-1.0)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        id="user_engagement_growth"
+                        name="user_engagement_growth"
+                        placeholder="0.1"
+                        value="0.1"
+                        min="0"
+                        max="1"
+                      />
+                    </div>
+
+                    <div class="space-y-2">
+                      <label
+                        for="buzz_change_rate"
+                        class="block text-xs font-medium text-gray-400"
+                      >
+                        Buzz Change Rate
+                      </label>
+                      <input
+                        type="number"
+                        step="0.1"
+                        class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        id="buzz_change_rate"
+                        name="buzz_change_rate"
+                        placeholder="5.0"
+                        value="5.0"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <button
+                type="submit"
+                class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-[1.02] focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                id="analyzeBtn"
+              >
+                <span class="flex items-center justify-center">
+                  <i class="fas fa-analytics mr-2"></i>
+                  <span class="btn-text">Analisis Sentimen</span>
+                  <svg
+                    class="animate-spin -mr-1 ml-3 h-5 w-5 text-white hidden"
+                    id="loadingSpinner"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                </span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Examples Section -->
+<div class="py-20 bg-gray-800">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+        <i class="fas fa-lightbulb mr-3 text-yellow-400"></i>
+        Contoh Analisis
+      </h2>
+      <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+        Lihat bagaimana model kami menganalisis berbagai jenis sentimen
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <!-- Positive Example -->
+      <div
+        class="bg-gray-700/50 rounded-xl p-6 border border-gray-600 hover:border-green-500/50 transition-colors"
+      >
+        <div class="text-center">
+          <div
+            class="w-16 h-16 bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
+            <i class="fas fa-smile text-3xl text-green-400"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-green-400 mb-3">
+            Sentimen Positif
+          </h3>
+          <p class="text-gray-300 text-sm mb-4 leading-relaxed">
+            "Produk ini luar biasa! Kualitasnya sangat bagus dan pelayanannya
+            memuaskan. Highly recommended!"
+          </p>
+          <span
+            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-900/30 text-green-400 border border-green-700"
+          >
+            Score: 0.85
+          </span>
+        </div>
+      </div>
+
+      <!-- Neutral Example -->
+      <div
+        class="bg-gray-700/50 rounded-xl p-6 border border-gray-600 hover:border-yellow-500/50 transition-colors"
+      >
+        <div class="text-center">
+          <div
+            class="w-16 h-16 bg-yellow-900/30 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
+            <i class="fas fa-meh text-3xl text-yellow-400"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-yellow-400 mb-3">
+            Sentimen Netral
+          </h3>
+          <p class="text-gray-300 text-sm mb-4 leading-relaxed">
+            "Produk standar sesuai dengan harga. Tidak ada yang istimewa tapi
+            juga tidak mengecewakan."
+          </p>
+          <span
+            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-900/30 text-yellow-400 border border-yellow-700"
+          >
+            Score: 0.50
+          </span>
+        </div>
+      </div>
+
+      <!-- Negative Example -->
+      <div
+        class="bg-gray-700/50 rounded-xl p-6 border border-gray-600 hover:border-red-500/50 transition-colors"
+      >
+        <div class="text-center">
+          <div
+            class="w-16 h-16 bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
+            <i class="fas fa-frown text-3xl text-red-400"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-red-400 mb-3">
+            Sentimen Negatif
+          </h3>
+          <p class="text-gray-300 text-sm mb-4 leading-relaxed">
+            "Sangat kecewa dengan produk ini. Kualitas buruk dan pelayanan tidak
+            responsif. Tidak recommend."
+          </p>
+          <span
+            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-900/30 text-red-400 border border-red-700"
+          >
+            Score: 0.15
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Features Section -->
+<div class="py-20 bg-gray-900">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+        <i class="fas fa-star mr-3 text-blue-400"></i>
+        Fitur Unggulan
+      </h2>
+      <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+        Teknologi machine learning terdepan untuk analisis sentimen yang akurat
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div class="text-center group">
+        <div
+          class="w-16 h-16 bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-900/50 transition-colors"
+        >
+          <i class="fas fa-robot text-2xl text-blue-400"></i>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">AI Powered</h3>
+        <p class="text-gray-400 text-sm">
+          Model Ridge Regression dengan 5000+ TF-IDF features
+        </p>
+      </div>
+
+      <div class="text-center group">
+        <div
+          class="w-16 h-16 bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-green-900/50 transition-colors"
+        >
+          <i class="fas fa-tachometer-alt text-2xl text-green-400"></i>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">Real-time</h3>
+        <p class="text-gray-400 text-sm">
+          Analisis instan dengan response time yang cepat
+        </p>
+      </div>
+
+      <div class="text-center group">
+        <div
+          class="w-16 h-16 bg-yellow-900/30 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-yellow-900/50 transition-colors"
+        >
+          <i class="fas fa-chart-bar text-2xl text-yellow-400"></i>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">Akurat</h3>
+        <p class="text-gray-400 text-sm">
+          Tingkat akurasi tinggi dengan R² score 0.8610
+        </p>
+      </div>
+
+      <div class="text-center group">
+        <div
+          class="w-16 h-16 bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-900/50 transition-colors"
+        >
+          <i class="fas fa-globe text-2xl text-purple-400"></i>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">Multi-platform</h3>
+        <p class="text-gray-400 text-sm">
+          Mendukung berbagai platform media sosial
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_scripts %}
+<script>
+  // Character counter
+  document
+    .getElementById("text_content")
+    .addEventListener("input", function () {
+      const charCount = this.value.length;
+      const charCountElement = document.getElementById("charCount");
+      charCountElement.textContent = charCount;
+
+      // Change color based on character count
+      if (charCount > 950) {
+        charCountElement.className = "text-right text-sm text-red-400";
+      } else if (charCount > 800) {
+        charCountElement.className = "text-right text-sm text-yellow-400";
+      } else {
+        charCountElement.className = "text-right text-sm text-gray-400";
+      }
+    });
+
+  // Toggle optional fields
+  function toggleOptionalFields() {
+    const optionalFields = document.getElementById("optionalFields");
+    const toggleIcon = document.getElementById("toggleIcon");
+
+    if (optionalFields.classList.contains("hidden")) {
+      optionalFields.classList.remove("hidden");
+      toggleIcon.classList.add("rotate-180");
+    } else {
+      optionalFields.classList.add("hidden");
+      toggleIcon.classList.remove("rotate-180");
+    }
+  }
+
+  // Form submission with loading state
+  document
+    .getElementById("sentimentForm")
+    .addEventListener("submit", function () {
+      const btn = document.getElementById("analyzeBtn");
+      const btnText = btn.querySelector(".btn-text");
+      const spinner = document.getElementById("loadingSpinner");
+
+      btn.disabled = true;
+      btnText.textContent = "Menganalisis...";
+      spinner.classList.remove("hidden");
+    });
+
+  // Auto-set current day
+  document.addEventListener("DOMContentLoaded", function () {
+    const days = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    const today = days[new Date().getDay()];
+    document.getElementById("day_of_week").value = today;
+  });
+</script>
+{% endblock %}
