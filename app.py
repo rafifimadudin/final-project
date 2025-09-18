@@ -34,7 +34,7 @@ app.secret_key = 'sentiment_analysis_app_2024'
 
 # Load the trained model components
 try:
-    model_components = joblib.load('sentiment_model_ridge.joblib')
+    model_components = joblib.load('sentiment_model_ridge (1).joblib')
     
     ridge_model = model_components['ridge_model']
     scaler = model_components['scaler']
